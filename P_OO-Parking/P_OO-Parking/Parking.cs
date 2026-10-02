@@ -1,11 +1,15 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Numerics;
 
 namespace P_OO_Parking
 {
     class Parking
     {
         private const int MaxPlaces = 20;
-        private static Vehicule?[] _places = new Vehicule?[MaxPlaces];
+        private static List<Vehicule> _places = new List<Vehicule>();
 
         public void Showmenu()
         {
@@ -36,8 +40,7 @@ namespace P_OO_Parking
                     PlanParking();
                     break;
                 case 4:
-                    string plaqueRecherche = Vehicule.DemanderPlaque();
-                        RechercheVehicule(plaqueRecherche);
+                        RechercheVehicule();
                     break;
                 case 0:
                     return true;
@@ -51,84 +54,81 @@ namespace P_OO_Parking
 
         public static void EntreeVehicule(string plaque)
         {
-
-            foreach (Vehicule? place in _places)
+            if (_places.Any(place => place.Plaque == plaque))
             {
-                if (place != null && place.Plaque == plaque)
-                {
-                    Console.WriteLine("Ce véhicule est déjà dans le parking.");
-                    return;
-                }
+                Console.WriteLine("Ce véhicule est déjà dans le parking.");
+                return;
             }
 
-            int indexLibre = -1;
-            int i = 0;
-            foreach (Vehicule? place in _places)
-            {
-                if (place == null)
-                {
-                    indexLibre = i;
-                    break;
-                }
-                i++;
-            }
-
-            if (indexLibre == -1)
+            if (_places.Count >= MaxPlaces)
             {
                 Console.WriteLine("Parking complet, aucune place disponible.");
                 return;
             }
 
-            Vehicule vehicule = new Vehicule(plaque);
-            vehicule.HeureEntree = DateTime.Now;
-            _places[indexLibre] = vehicule;
+            int numeroPlace = 0;
 
-            Console.WriteLine($"Véhicule {plaque}, garé à la place {indexLibre + 1}, à {vehicule.HeureEntree}.");
+            for (int i = 1; i <= MaxPlaces; i++)
+            {
+                bool occupe = false;
+
+                foreach (Vehicule voiture in _places)
+                {
+                    if (voiture.Place == i)
+                    {
+                        occupe = true;
+                    }
+                }
+                if (occupe == false && numeroPlace == 0)
+                {
+                    numeroPlace = i;
+                }
+            }
+
+            Vehicule vehicule = new Vehicule(plaque);
+            vehicule.Place = numeroPlace;
+            vehicule.HeureEntree = DateTime.Now;
+
+            _places.Add(vehicule);
+
+            Ticket.Haveticket(plaque, vehicule.Place, vehicule.HeureEntree);
+
+
         }
 
         public static void SortieVehicule(string plaque)
         {
-            int index = -1;
-            int i = 0;
+            Vehicule vehicule = _places.FirstOrDefault(place => place.Plaque == plaque);
 
-            foreach (Vehicule? place in _places)
-            {
-                if (place != null && place.Plaque == plaque)
-                {
-                    index = i;
-                    break;
-                }
-                i++;
-            }
-
-            if (index == -1)
+            if (vehicule == null)
             {
                 Console.WriteLine("Aucun véhicule trouvé avec cette plaque.");
                 return;
             }
 
-            Vehicule vehicule = _places[index]!;
             vehicule.HeureSortie = DateTime.Now;
 
-            
             bool input = true;
             do
             {
                 Console.Write("Confirmer la sortie ? (o/n) : ");
-                string? reponse = Console.ReadLine();
+                string reponse = Console.ReadLine();
 
                 if (reponse == "o")
                 {
-                    _places[index] = null;
+                    vehicule.HeureSortie = DateTime.Now;
+                    Ticket.sortieticket(plaque, vehicule.HeureSortie);
+
+                    _places.Remove(vehicule);
+
                     Console.WriteLine("Place libérée.");
                     input = true;
-                       
                 }
                 else if (reponse == "n")
                 {
                     Console.WriteLine("Sortie annulée.");
                     input = true;
-                    
+
                 }
                 else
                 {
@@ -137,75 +137,118 @@ namespace P_OO_Parking
                 }
             }while (input == false);
         }
-
-        public static void PlanParking()
+      
+            public static void PlanParking()
         {
-         
-            int i = 1;
-            int r = 1;
-            foreach (Vehicule? place in _places)
+            Console.Clear();
+            Console.WriteLine("=== PLAN DU PARKING ===");
+            Console.WriteLine("L : Libre / X : Occupée");
+            Console.WriteLine();
+
+            int ligne = 0;
+            for (int i = 1; i <= MaxPlaces; i++)
             {
-                
-                string statut;
-                if (place == null)
+                bool occupe = false;
+                foreach (Vehicule vehicule in _places)
                 {
-                    statut = "L";
+                    if (vehicule.Place == i)
+                    {
+                        occupe = true;
+                    }
                 }
-                else
+                string statut;
+                if (occupe == true)
                 {
                     statut = "X";
                 }
+                else
+                {
+                    statut = "L";
+                }
+                Console.Write($"|{i:D2}:{statut}| "); // lien https://stackoverflow.com/questions/5972949/number-formatting-how-to-convert-1-to-01-2-to-02-etc
+                ligne++;
 
-                Console.Write($"|{i:D2}:{statut}| ");
-
-                if (r == 5)
+                if (ligne == 5)
                 {
                     Console.WriteLine();
-                    r= 0;
+                    ligne = 0;
                 }
-
-                i++;
-                r++;
             }
         }
 
 
 
 
-        public static void RechercheVehicule(string plaque) // to do recherche place 
+
+        public static void RechercheVehicule()
         {
-            int index = -1;
-            int i = 0;
+            bool trouver = false;
+            int choix;
 
+            Console.Clear();
+            Console.WriteLine("Choisissez comment rechercher votre véhicule :");
+            Console.WriteLine("1 : Par plaque d'immatriculation");
+            Console.WriteLine("2 : Par place de parking");
+            Console.Write("Votre choix : ");
+            int.TryParse(Console.ReadLine(), out choix);
 
-            foreach (Vehicule? place in _places)
+            switch (choix)
             {
-                if (place != null && place.Plaque == plaque)
-                {
-                    index = i;
-                    Vehicule vehicule = new Vehicule(plaque);
-                    Console.WriteLine($"Véhicule {plaque} garé à la place {index + 1}.");
-                }
-                i++;
+                case 1:
+                    string plaque = Vehicule.DemanderPlaque();
+
+                    foreach (Vehicule vehicule in _places)
+                    {
+                        if (vehicule.Plaque == plaque)
+                        {
+                            trouver = true;
+                            TimeSpan duree = DateTime.Now - vehicule.HeureEntree;
+                            double prix = duree.TotalMinutes * 1.00;
+
+                            
+
+                            Console.WriteLine($"Véhicule {vehicule.Plaque}, garé à la place {vehicule.Place}, à {vehicule.HeureEntree}.");
+                            Console.WriteLine($"Prix actuel : {prix} euros");
+                        }
+                    }
+                    if (trouver == false)
+                    {
+                        Console.WriteLine("Aucun véhicule trouvé avec cette plaque.");
+                    }
+                    break;
+
+                case 2:
+                    int placeParking;
+
+                    Console.Write("Entrez votre place de parking : ");
+                    int.TryParse(Console.ReadLine(), out placeParking);
+
+                    foreach (Vehicule vehicule in _places)
+                    {
+                        if (vehicule.Place == placeParking)
+                        {
+                            trouver = true;
+                            TimeSpan duree = DateTime.Now - vehicule.HeureEntree;
+                            double prix = duree.TotalMinutes * 1.00;
+
+
+
+                            Console.WriteLine($"Véhicule {vehicule.Plaque}, garé à la place {vehicule.Place}, à {vehicule.HeureEntree}.");
+                            Console.WriteLine($"Prix actuel : {prix} euros");
+                        }
+                    }
+
+                    if (trouver == false)
+                    {
+                        Console.WriteLine("Aucun véhicule trouvé à cette place.");
+                    }
+                    break;
+
+                default:
+                    Console.WriteLine("Choix invalide.");
+                    break;
             }
-
-            if (index == -1)
-            {
-                Console.WriteLine("Aucun véhicule trouvé avec cette plaque.");
-                return;
-            }
-
-
-
-
-
-
-
-
-
         }
-
-
 
 
 
@@ -220,6 +263,22 @@ namespace P_OO_Parking
 
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
 
 
 

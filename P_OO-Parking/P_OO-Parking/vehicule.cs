@@ -10,7 +10,7 @@ namespace P_OO_Parking
         private int _vehiculeId;
 
         public string Plaque { get; }
-
+        public int Place { get; set; }
         public DateTime HeureEntree { get; set; }
         public DateTime HeureSortie{ get; set; }
 
@@ -29,9 +29,9 @@ namespace P_OO_Parking
 
         public static bool PlaqueEstValide(string plaque)
         {
-            return Regex.IsMatch(plaque, @"^[A-Za-z]{2}\d{1,6}$");
-    
-        
+            return Regex.IsMatch(plaque, @"^[A-Za-z]{2}\d{1,6}$"); // lien https://stackoverflow.com/questions/78924052/complete-regex-to-validate-german-license-plates
+            
+
         }
 
         public static string DemanderPlaque()
