@@ -6,7 +6,7 @@ namespace P_OO_Parking
     class Ticket
     {
         // Prix payé pour une heure de stationnement.
-        public const decimal TarifHoraire = 3.00m;
+        public const decimal TarifHoraire = 1.00m;
 
         // Liste des tickets créés pendant la session.
         private static List<Ticket> _ticketList = new List<Ticket>();

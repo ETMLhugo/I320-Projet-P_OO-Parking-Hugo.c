@@ -6,9 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="../P_OO-Parking/Parking.cs" Link="Parking.cs" />
-    <Compile Include="../P_OO-Parking/PlaceParking.cs" Link="PlaceParking.cs" />
-    <Compile Include="../P_OO-Parking/Vehicule.cs" Link="Vehicule.cs" />
-    <Compile Include="../P_OO-Parking/Ticket.cs" Link="Ticket.cs" />
+    <Compile Include="../P_OO-Parking/P_OO-Parking/Parking.cs" Link="Parking.cs" />
+    <Compile Include="../P_OO-Parking/P_OO-Parking/PlaceParking.cs" Link="PlaceParking.cs" />
+    <Compile Include="../P_OO-Parking/P_OO-Parking/vehicule.cs" Link="Vehicule.cs" />
+    <Compile Include="../P_OO-Parking/P_OO-Parking/Ticket.cs" Link="Ticket.cs" />
   </ItemGroup>
 </Project>

@@ -86,10 +86,10 @@ Tester("Plaques invalides", () =>
     }
 });
 Tester("Plaque mise en majuscules", () => Verifier(new Vehicule(" vd123 ").Plaque == "VD123"));
-Tester("Prix pour une heure", () => Verifier(Ticket.CalculerPrix(new DateTime(2026, 10, 30, 8, 0, 0), new DateTime(2026, 10, 30, 9, 0, 0)) == 3m));
-Tester("Prix pour trente minutes", () => Verifier(Ticket.CalculerPrix(new DateTime(2026, 10, 30, 8, 0, 0), new DateTime(2026, 10, 30, 8, 30, 0)) == 1.50m));
+Tester("Prix pour une heure", () => Verifier(Ticket.CalculerPrix(new DateTime(2026, 10, 30, 8, 0, 0), new DateTime(2026, 10, 30, 9, 0, 0)) == 1m));
+Tester("Prix pour trente minutes", () => Verifier(Ticket.CalculerPrix(new DateTime(2026, 10, 30, 8, 0, 0), new DateTime(2026, 10, 30, 8, 30, 0)) == 0.50m));
 Tester("Prix pour une durée nulle", () => Verifier(Ticket.CalculerPrix(DateTime.Today, DateTime.Today) == 0m));
-Tester("Arrondi du prix", () => Verifier(Ticket.CalculerPrix(DateTime.Today, DateTime.Today.AddSeconds(6)) == 0.01m));
+Tester("Arrondi du prix", () => Verifier(Ticket.CalculerPrix(DateTime.Today, DateTime.Today.AddSeconds(18)) == 0.01m));
 Tester("Durée négative refusée", () =>
 {
     // Indique si la durée incorrecte a été refusée.
@@ -112,7 +112,7 @@ Tester("Entrée et ticket", () =>
 {
     // Texte affiché pendant le test.
     string texte = Capturer(() => Parking.EntreeVehicule("VD123"));
-    Verifier(texte.Contains("VD123") && texte.Contains("01") && texte.Contains("3.00"));
+    Verifier(texte.Contains("VD123") && texte.Contains("01") && texte.Contains("1.00"));
     Verifier(Capturer(Parking.PlanParking).Contains("|01:X|"));
 });
 Tester("Plaque en double même avec des minuscules", () =>
@@ -185,10 +185,10 @@ Tester("Paiements et historique", () =>
     Capturer(() => Ticket.CreerTicket("VD123", 1, debut));
     Ticket.FermerTicket("VD123", debut.AddHours(1));
     Ticket.FermerTicket("VD123", debut.AddHours(2));
-    Verifier(Ticket.MontantTotalPaye() == 3m);
+    Verifier(Ticket.MontantTotalPaye() == 1m);
     // Texte affiché pendant le test.
     string texte = Capturer(Ticket.AfficherHistorique);
-    Verifier(texte.Contains("ENTREE (") && texte.Contains("SORTIE (") && texte.Contains("3.00 CHF"));
+    Verifier(texte.Contains("ENTREE (") && texte.Contains("SORTIE (") && texte.Contains("1.00 CHF"));
 });
 Tester("Menu lettre sans quitter", () =>
 {
