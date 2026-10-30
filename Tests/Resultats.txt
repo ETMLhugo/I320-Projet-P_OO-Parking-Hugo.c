@@ -1,0 +1,25 @@
+OK : Plaques valides
+OK : Plaques invalides
+OK : Plaque mise en majuscules
+OK : Prix pour une heure
+OK : Prix pour trente minutes
+OK : Prix pour une durée nulle
+OK : Arrondi du prix
+OK : Durée négative refusée
+OK : Place libre puis occupée
+OK : Entrée et ticket
+OK : Plaque en double même avec des minuscules
+OK : Entrée invalide refusée
+OK : Parking plein
+OK : Recherche par plaque
+OK : Recherche par place
+OK : Recherche inconnue
+OK : Sortie annulée
+OK : Sortie confirmée par place
+OK : Sortie confirmée par plaque
+OK : Place libérée réutilisée
+OK : Statistiques occupation
+OK : Paiements et historique
+OK : Menu lettre sans quitter
+OK : Menu zéro pour quitter
+24 réussis, 0 échecs
