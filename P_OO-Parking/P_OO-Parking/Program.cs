@@ -1,24 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text.RegularExpressions;
 using P_OO_Parking;
 
-// See https://aka.ms/new-console-template for more information
-// ETML - 2026 - P_OO
-// Createur Hugo Chevrette - CID2A
-// Concevoir et réaliser une simulation de parking
-// ///////////////////////////////////////////////////
-
+// Parking utilisé par le programme.
 Parking parking = new Parking();
+// Indique si l’utilisateur souhaite quitter.
 bool quitter = false;
 
 while (!quitter)
 {
     Console.Clear();
-    parking.Showmenu();
+    parking.AfficherMenu();
     quitter = parking.ChoixMenu();
 
     if (!quitter)
@@ -27,17 +17,3 @@ while (!quitter)
         Console.ReadKey();
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
